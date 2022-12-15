@@ -54,7 +54,7 @@ pipeline {
 
     stage('DEV Deploy') {
     steps {
-       deploy adapters: [tomcat9(url: 'http://3.19.221.242:8666/', 
+       deploy adapters: [tomcat9(url: 'http://3.19.221.242:8080/', 
                               credentialsId: 'tomcatlogin')], 
                      war: 'target/*.war',
                      contextPath: 'demoapp'
