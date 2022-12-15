@@ -63,19 +63,15 @@ pipeline {
     post('Slack Notification'){
         success 
               {
-                steps {
                  slackSend(channel:'jenkins-test', message: "DEV Job is successful, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                 }
-              }
         failure 
               {
-                steps {
                  slackSend(channel:'jenkins-test', message: "SORRY - DEV Job has failed, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                 }
               }
                 
           }
-    }
 
     stage('Approval Request - QA Deployment'){
       steps{
@@ -99,15 +95,14 @@ pipeline {
     post('Slack Notification'){
         success 
               {
-                steps {
+                
                  slackSend(channel:'jenkins-test', message: "QA Job is successful, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
                 }
-              }
+              
         failure 
               {
-                steps {
                  slackSend(channel:'jenkins-test', message: "SORRY - QA Job has failed, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-                  }
+                  
               }
                 
             }
