@@ -61,5 +61,11 @@ pipeline {
         }
     }
 
+    stage('Slack'){
+      steps{
+        slackSend channel: 'jenkins-test', failOnError: true, message: 'Deployment has been passed', tokenCredentialId: 'slack'
+      }
+    }
+
     }
 }
