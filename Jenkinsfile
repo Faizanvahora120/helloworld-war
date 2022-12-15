@@ -25,7 +25,7 @@ pipeline {
       stage('Code Build') {
 
         steps {
-            sh 'mvn clean package -f /var/lib/jenkins/workspace/helloworld-war/pom.xml'
+            sh 'mvn clean package -f /var/lib/jenkins/workspace/HelloWolrd-War'
         }
       }
 
@@ -39,7 +39,7 @@ pipeline {
         steps {
 
             withSonarQubeEnv(installationName: 'sonarserver', credentialsId: 'sonartoken') {
-            sh 'mvn sonar:sonar -f /var/lib/jenkins/workspace/helloworld-war/pom.xml'
+            sh 'mvn sonar:sonar -f /var/lib/jenkins/workspace/HelloWolrd-War/pom.xml'
         }
         }
       }
@@ -47,7 +47,7 @@ pipeline {
      stage('Artifact Uploading in Nexus Repo')
      {
      steps{
-        nexusArtifactUploader artifacts: [[artifactId: 'hello-world-war', classifier: "", file: '/var/lib/jenkins/workspace/helloworld-war/target/*.war', type: 'war']], credentialsId: 'nexuslogin', groupId: 'com.efsavage', nexusUrl: "${NEXUS_URL}" , protocol:"${NEXUS_PROTOCOL}" , nexusVersion: 'nexus3' , repository: 'maven-snapshots', version: "${NEXUS_VERSION}"
+        nexusArtifactUploader artifacts: [[artifactId: 'hello-world-war', classifier: "", file: '/var/lib/jenkins/workspace/HelloWolrd-War', type: 'war']], credentialsId: 'nexuslogin', groupId: 'com.efsavage', nexusUrl: "${NEXUS_URL}" , protocol:"${NEXUS_PROTOCOL}" , nexusVersion: 'nexus3' , repository: 'maven-snapshots', version: "${NEXUS_VERSION}"
      }
      }
 
