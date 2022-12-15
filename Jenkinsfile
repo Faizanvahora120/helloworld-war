@@ -57,17 +57,17 @@ pipeline {
        deploy adapters: [tomcat9(url: 'http://3.19.221.242:8080/', 
                               credentialsId: 'tomcatlogin')], 
                      war: 'target/*.war',
-                     contextPath: 'demoapp'
+                     contextPath: 'devapp'
         }
 
     post('Slack Notification'){
         success 
               {
-                slackSend channel: 'jenkins-test', failOnError: true, message: 'DEV Deployment stage has passed', tokenCredentialId: 'slack'
+                slackSend channel: 'jenkins-test', failOnError: true, message: 'DEV Deployment was successful; here is the info - Job ["${env.JOB_NAME}${env.BUILD_NUMBER}${env.BUILD_URL}"] ', tokenCredentialId: 'slack'
               }
         failure 
               {
-                slackSend channel: 'jenkins-test', failOnError: true, message: 'DEV Deployment stage has failed', tokenCredentialId: 'slack'
+                slackSend channel: 'jenkins-test', failOnError: true, message: 'SORRY - DEV Deployment has failed; here is the info - Job ["${env.JOB_NAME}${env.BUILD_NUMBER}${env.BUILD_URL}"]', tokenCredentialId: 'slack'
               }
                 
           }
@@ -83,6 +83,30 @@ pipeline {
       
     }
 
+
+    stage('QA Deployment') {
+    steps {
+       deploy adapters: [tomcat9(url: 'http://3.19.221.242:8080/', 
+                              credentialsId: 'tomcatlogin')], 
+                     war: 'target/*.war',
+                     contextPath: 'testapp'
+        }
+
+    post('Slack Notification'){
+        success 
+              {
+                slackSend channel: 'jenkins-test', failOnError: true, message: 'QA Deployment was successful. Please continue with testing ; here is the info - Job ["${env.JOB_NAME}${env.BUILD_NUMBER}${env.BUILD_URL}"]', tokenCredentialId: 'slack'
+              }
+        failure 
+              {
+                slackSend channel: 'jenkins-test', failOnError: true, message: 'SORRY - QA Deployment was failed; here is the info - Job ["${env.JOB_NAME}${env.BUILD_NUMBER}${env.BUILD_URL}"]', tokenCredentialId: 'slack'
+              }
+                
+            }
+        }
+
     }
+
+
 
   }
