@@ -59,13 +59,33 @@ pipeline {
                      war: 'target/*.war',
                      contextPath: 'demoapp'
         }
+
+    post('Slack Notification'){
+        success 
+              {
+                slackSend channel: 'jenkins-test', failOnError: true, message: 'DEV Deployment stage has passed', tokenCredentialId: 'slack'
+              }
+        failure 
+              {
+                slackSend channel: 'jenkins-test', failOnError: true, message: 'DEV Deployment stage has failed', tokenCredentialId: 'slack'
+              }
+                
+          }
     }
 
-    stage('Slack'){
+    stage('Approval Request - QA Deployment'){
       steps{
-        slackSend channel: 'jenkins-test', failOnError: true, message: 'Deployment has been passed', tokenCredentialId: 'slack'
-      }
+             timeout(time: 7, unit: 'DAYS') 
+              {
+               input 'Please approve request for further QA Deployment ?'
+              }
+           }
+      
     }
 
+
+
+
     }
-}
+
+  }
