@@ -81,7 +81,7 @@ pipeline {
       steps{
              timeout(time: 7, unit: 'DAYS') 
               {
-               input 'Please approve request for further QA Deployment ?', submitter: 'admin'
+                input message: 'Please approve request for further QA Deployment ?', submitter: 'admin'
               }
            }
       
