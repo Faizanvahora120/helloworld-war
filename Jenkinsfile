@@ -8,7 +8,8 @@ pipeline {
     environment{
         NEXUS_URL= "3.138.67.9:8081"
         NEXUS_PROTOCOL = "http"
-        NEXUS_VERSION = "1.0-SNAPSHOT"
+        NEXUS_VERSION = "1.0.0"
+        
 
     }
 
