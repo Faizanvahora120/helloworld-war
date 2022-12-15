@@ -8,7 +8,7 @@ pipeline {
     environment{
         NEXUS_URL= "3.138.67.9:8081"
         NEXUS_PROTOCOL = "http"
-        NEXUS_VERSION = "1.0.0"
+        NEXUS_VERSION = "1.0-SNAPSHOT"
         
 
     }
@@ -48,7 +48,7 @@ pipeline {
      stage('Artifact Uploading in Nexus Repo')
      {
      steps{
-        nexusArtifactUploader artifacts: [[artifactId: 'hello-world-war', classifier: "", file: '/var/lib/jenkins/workspace/HelloWolrd-War', type: 'war']], credentialsId: 'nexuslogin', groupId: 'QA', nexusUrl: "${NEXUS_URL}" , protocol:"${NEXUS_PROTOCOL}" , nexusVersion: 'nexus3' , repository: 'maven-snapshots', version: "${NEXUS_VERSION}"
+        nexusArtifactUploader artifacts: [[artifactId: 'hello-world-war', classifier: "", file: '/var/lib/jenkins/workspace/HelloWolrd-War', type: 'war']], credentialsId: 'nexuslogin', groupId: 'com.efsavage', nexusUrl: "${NEXUS_URL}" , protocol:"${NEXUS_PROTOCOL}" , nexusVersion: 'nexus3' , repository: 'maven-snapshots', version: "${NEXUS_VERSION}"
      }
      }
 
