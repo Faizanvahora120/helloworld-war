@@ -35,7 +35,7 @@ pipeline {
       stage('Code Build') {
 
         steps {
-            sh 'mvn clean package -f "${POM_XML_FILE_PATH}"'
+            sh "mvn clean package -f ${POM_XML_FILE_PATH}"
         }
       }
 
@@ -49,7 +49,7 @@ pipeline {
         steps {
 
             withSonarQubeEnv(installationName: 'sonarserver', credentialsId: 'sonartoken') {
-            sh 'mvn sonar:sonar -f ${POM_XML_FILE_PATH}"'
+            sh "mvn sonar:sonar -f ${POM_XML_FILE_PATH}"
         }
         }
       }
