@@ -35,7 +35,7 @@ pipeline {
       stage('Code Build') {
 
         steps {
-            sh "mvn clean package -f /var/lib/jenkins/workspace/HelloWolrd-War/pom.xml"
+            sh "mvn clean package -f ${POM_XML_FILE_PATH}"
         }
       }
 
@@ -65,7 +65,7 @@ pipeline {
     steps {
        deploy adapters: [tomcat9(url: "${TOMCAT_URL}", 
                               credentialsId: 'tomcatlogin')], 
-                     war: "${WAR_FILE_PATH}",
+                     war: "target/*.war",
                      contextPath: "${TOMCAT_DEV_CONTEXT_PATH}"
         }
 
