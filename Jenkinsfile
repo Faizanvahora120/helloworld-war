@@ -97,7 +97,7 @@ pipeline {
     steps {
        deploy adapters: [tomcat9(url: "${TOMCAT_URL}", 
                               credentialsId: 'tomcatlogin')], 
-                     war: "${WAR_FILE_PATH}",
+                     war: "target/*.war",
                      contextPath: "${TOMCAT_TEST_CONTEXT_PATH}"
         }
 
