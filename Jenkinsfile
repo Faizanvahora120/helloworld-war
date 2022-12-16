@@ -35,7 +35,7 @@ pipeline {
       stage('Code Build') {
 
         steps {
-            sh "mvn clean package -f ${POM_XML_FILE_PATH}"
+            sh "mvn clean package -f /var/lib/jenkins/workspace/HelloWolrd-War/pom.xml"
         }
       }
 
