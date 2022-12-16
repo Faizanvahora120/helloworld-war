@@ -8,9 +8,18 @@ pipeline {
     environment{
         NEXUS_URL= "3.138.67.9:8081"
         NEXUS_PROTOCOL = "http"
-        NEXUS_VERSION = "1.0-SNAPSHOT"
-        
-
+        VERSION = "1.0-SNAPSHOT"
+        POM_XML_FILE_PATH = "/var/lib/jenkins/workspace/HelloWolrd-War/pom.xml"
+        WAR_FILE_PATH = "/var/lib/jenkins/workspace/HelloWolrd-War/target/hello-world-war-1.0-SNAPSHOT.war"
+        ARTIFACT_ID = "hello-world-war"
+        ARTIFACT_TYPE = "war"
+        CREDENTIALS_ID = "nexuslogin"
+        GROUP_ID = "com.efsavage"
+        NEXUS_VERSION = "nexus3"
+        NEXUS_REPOSITORY = "maven-snapshots"
+        TOMCAT_URL = "http://3.19.221.242:8080/"
+        TOMCAT_DEV_CONTEXT_PATH = "devapp"
+        TOMCAT_TEST_CONTEXT_PATH = "testapp"
     }
 
     stages
@@ -26,7 +35,7 @@ pipeline {
       stage('Code Build') {
 
         steps {
-            sh 'mvn clean package -f /var/lib/jenkins/workspace/HelloWolrd-War'
+            sh 'mvn clean package -f "${POM_XML_FILE_PATH}"'
         }
       }
 
@@ -40,7 +49,7 @@ pipeline {
         steps {
 
             withSonarQubeEnv(installationName: 'sonarserver', credentialsId: 'sonartoken') {
-            sh 'mvn sonar:sonar -f /var/lib/jenkins/workspace/HelloWolrd-War/pom.xml'
+            sh 'mvn sonar:sonar -f ${POM_XML_FILE_PATH}"'
         }
         }
       }
@@ -48,43 +57,65 @@ pipeline {
      stage('Artifact Uploading in Nexus Repo')
      {
      steps{
-        nexusArtifactUploader artifacts: [[artifactId: 'hello-world-war', classifier: "", file: '/var/lib/jenkins/workspace/HelloWolrd-War/target/hello-world-war-1.0-SNAPSHOT.war', type: 'war']], credentialsId: 'nexuslogin', groupId: 'com.efsavage', nexusUrl: "${NEXUS_URL}" , protocol:"${NEXUS_PROTOCOL}" , nexusVersion: 'nexus3' , repository: 'maven-snapshots', version: "${NEXUS_VERSION}"
+        nexusArtifactUploader artifacts: [[artifactId: "${ARTIFACT_ID}", classifier: "", file: "${WAR_FILE_PATH}", type: "${ARTIFACT_TYPE}"]], credentialsId: "${CREDENTIALS_ID}", groupId: "${GROUP_ID}", nexusUrl: "${NEXUS_URL}" , protocol:"${NEXUS_PROTOCOL}" , nexusVersion: "${NEXUS_VERSION}" , repository: "${NEXUS_REPOSITORY}", version: "${VERSION}"
      }
      }
 
     stage('DEV Deploy') {
     steps {
-       deploy adapters: [tomcat9(url: 'http://3.19.221.242:8080/', 
+       deploy adapters: [tomcat9(url: "${TOMCAT_URL}", 
                               credentialsId: 'tomcatlogin')], 
-                     war: 'target/*.war',
-                     contextPath: 'demoapp'
+                     war: "${WAR_FILE_PATH}",
+                     contextPath: "${TOMCAT_DEV_CONTEXT_PATH}"
         }
 
     post('Slack Notification'){
         success 
               {
-                slackSend channel: 'jenkins-test', failOnError: true, message: 'DEV Deployment stage has passed', tokenCredentialId: 'slack'
-              }
+                 slackSend(channel:'jenkins-test', message: "DEV Deployment is successful, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                }
         failure 
               {
-                slackSend channel: 'jenkins-test', failOnError: true, message: 'DEV Deployment stage has failed', tokenCredentialId: 'slack'
+                 slackSend(channel:'jenkins-test', message: "SORRY - DEV Deployment has failed, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                }
               }
                 
           }
-    }
 
     stage('Approval Request - QA Deployment'){
       steps{
              timeout(time: 7, unit: 'DAYS') 
               {
-               input 'Please approve request for further QA Deployment ?'
+                input message: 'Please approve request for further QA Deployment ?', submitter: 'admin'
               }
            }
       
     }
 
 
+    stage('QA Deployment') {
+    steps {
+       deploy adapters: [tomcat9(url: "${TOMCAT_URL}", 
+                              credentialsId: 'tomcatlogin')], 
+                     war: "${WAR_FILE_PATH}",
+                     contextPath: "${TOMCAT_TEST_CONTEXT_PATH}"
+        }
 
+    post('Slack Notification'){
+        success 
+              {
+                
+                 slackSend(channel:'jenkins-test', message: "QA Job is successful, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                }
+              
+        failure 
+              {
+                 slackSend(channel:'jenkins-test', message: "SORRY - QA Job has failed, here is the info - Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+                  
+              }
+                
+            }
+        }
 
     }
 
