@@ -1,7 +1,7 @@
 ###                                                      Jenkinsfile for Java Hello-World App!
 ==========================================================================================================================================================
 
-*This is the simple Java Application Project. In this Project, I have included the Jenkinsfile for CI-CD. 
+*This is the simple Java Application Project. In this Project, I have included the Jenkinsfile for CI-CD.*
 
 ## This, Jenkinsfile 
 
